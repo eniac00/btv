@@ -1,0 +1,52 @@
+canvas {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid;
+    top: 20px;
+    bottom: 20px;
+  }
+
+  footer{
+    background-color:#aaa;
+    color: black;
+    text-align:center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: small;
+  }
+
+
+  .allButFooter {
+    min-height: calc(100vh - 40px);
+  }
+
+  .github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+  }
+  @keyframes octocat-wave {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(-25deg);
+    }
+
+    40% {
+        transform: rotate(10deg);
+    }
+
+    60% {
+        transform: rotate(-25deg);
+    }
+
+    80% {
+        transform: rotate(10deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+  }
