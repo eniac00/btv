@@ -1,13 +1,13 @@
 import { BinaryTreeNode, drawBinaryTree, VisualizationType } from 'binary-tree-visualizer';
 
-let root_B;
-let root;
+// variable for printing purpose
 let InOrders = "";
 let PreOrders = "";
 let PostOrders = "";
 
-class Node
-{
+// class structure for creating node 
+// necessary for createTreeCalc()
+class Node {
     constructor(data) {
        this.left = null;
        this.right = null;
@@ -15,55 +15,104 @@ class Node
     }
 }
 
-
 function start(){
 
+    // getting array as string from the text box
     var txt = document.getElementById('txt').value;
 
+    // sanitizing the string and creating an array
     var txtArr = txt.split(",").map(function(item) {
         return item.trim();
-      });
+    });
 
-    root = createTreeVis(txtArr, root, 1);
-
+    // if first element of array is empty string just clear all the placeholders 
+    // including the canvas
+    if (txtArr[0] === '') {
+        document.getElementById("preOrder").innerHTML = "";
+        document.getElementById("inOrder").innerHTML = "";
+        document.getElementById("postOrder").innerHTML = "";
+        let canvas_elem = document.querySelector('canvas');
+        canvas_elem.getContext('2d').clearRect(0, 0, canvas_elem.width, canvas_elem.height);
+        return;
+    }
+    
+    let root = createTreeVis(txtArr);
+    
+    // drawing the binary tree from here
     drawBinaryTree(root, document.querySelector('canvas'), {
         type: VisualizationType.SIMPLE
     });
 
+    // from here all of them are used for calculating the orders
+    // createTreeCalc -> create another tree from the order calculation
+    let root_for_calc = createTreeCalc(txtArr);
 
-    root_B = createTreeCalc(txtArr, root_B, 1);
     PreOrders = "";
-    printPreorder(root_B);
+    printPreorder(root_for_calc);
     document.getElementById("preOrder").innerHTML = "<b>Pre-order:</b> " + PreOrders.trim();
+
     InOrders = "";
-    printInorder(root_B);
+    printInorder(root_for_calc);
     document.getElementById("inOrder").innerHTML = "<b>In-order:</b> " + InOrders.trim();
+
     PostOrders = "";
-    printPostorder(root_B);
+    printPostorder(root_for_calc);
     document.getElementById("postOrder").innerHTML = "<b>Post-order:</b> " + PostOrders.trim();
 }
 
-function createTreeVis(arr, root, i){
-    if (i<arr.length && arr[i]!='null' && arr[i]!='Null' && arr[i]!='None') {
-        let temp = new BinaryTreeNode(arr[i]);
-        root = temp;
 
-        root.left = createTreeVis(arr, root.left, 2*i);
-        root.right = createTreeVis(arr, root.right, 2*i+1);
-    }
+// this is responsible for drawing the whole tree in the canvas 
+function createTreeVis(arr){
+    let nodes = [];
+
+    arr.forEach((elem) => {
+        if (elem.toLowerCase() === 'null' || elem.toLowerCase() === 'none')
+            nodes.push(null);
+        else
+            nodes.push(new BinaryTreeNode(elem));
+    });
+
+    let kids = nodes.slice().reverse();
+
+    let root = kids.pop();
+
+    nodes.forEach((node) => {
+        if(node) {
+            if (kids)
+                node.left = kids.pop();
+            if (kids)
+                node.right = kids.pop();
+        }
+    });
 
     return root;
 }
-function createTreeCalc(arr, root_B, i){
-    if (i < arr.length && arr[i]!='null' && arr[i]!='Null' && arr[i]!='None') {
-        let temp = new Node(arr[i]);
-        root_B = temp;
 
-        root_B.left = createTreeCalc(arr, root_B.left, 2 * i);
+// this function just creates another binary tree for order calculation
+function createTreeCalc(arr){
+    let nodes = [];
 
-        root_B.right = createTreeCalc(arr, root_B.right, 2 * i+1);
-    }
-    return root_B;
+    arr.forEach((elem) => {
+        if (elem.toLowerCase() === 'null' || elem.toLowerCase() === 'none')
+            nodes.push(null);
+        else
+            nodes.push(new Node(elem));
+    });
+
+    let kids = nodes.slice().reverse();
+
+    let root = kids.pop();
+
+    nodes.forEach((node) => {
+        if(node) {
+            if (kids)
+                node.left = kids.pop();
+            if (kids)
+                node.right = kids.pop();
+        }
+    });
+
+    return root
 }
 
 function printInorder(node) {
@@ -89,8 +138,6 @@ function printPostorder(node) {
     printPostorder(node.right);
     PostOrders += node.data + " ";
 }
-
-
 
 window.start = start;
 
