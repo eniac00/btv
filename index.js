@@ -5,16 +5,6 @@ let InOrders = "";
 let PreOrders = "";
 let PostOrders = "";
 
-// class structure for creating node 
-// necessary for createTreeCalc()
-class Node {
-    constructor(data) {
-       this.left = null;
-       this.right = null;
-       this.data = data;
-    }
-}
-
 function start(){
 
     // getting array as string from the text box
@@ -36,33 +26,32 @@ function start(){
         return;
     }
     
-    let root = createTreeVis(txtArr);
+    // creating the binary tree
+    let root = createTree(txtArr);
+
     
-    // drawing the binary tree from here
+    // drawing the binary tree by using the package from here
     drawBinaryTree(root, document.querySelector('canvas'), {
         type: VisualizationType.SIMPLE
     });
 
-    // from here all of them are used for calculating the orders
-    // createTreeCalc -> create another tree from the order calculation
-    let root_for_calc = createTreeCalc(txtArr);
 
     PreOrders = "";
-    printPreorder(root_for_calc);
+    printPreorder(root);
     document.getElementById("preOrder").innerHTML = "<b>Pre-order:</b> " + PreOrders.trim();
 
     InOrders = "";
-    printInorder(root_for_calc);
+    printInorder(root);
     document.getElementById("inOrder").innerHTML = "<b>In-order:</b> " + InOrders.trim();
 
     PostOrders = "";
-    printPostorder(root_for_calc);
+    printPostorder(root);
     document.getElementById("postOrder").innerHTML = "<b>Post-order:</b> " + PostOrders.trim();
 }
 
 
 // this is responsible for drawing the whole tree in the canvas 
-function createTreeVis(arr){
+function createTree(arr){
     let nodes = [];
 
     arr.forEach((elem) => {
@@ -88,45 +77,18 @@ function createTreeVis(arr){
     return root;
 }
 
-// this function just creates another binary tree for order calculation
-function createTreeCalc(arr){
-    let nodes = [];
-
-    arr.forEach((elem) => {
-        if (elem.toLowerCase() === 'null' || elem.toLowerCase() === 'none')
-            nodes.push(null);
-        else
-            nodes.push(new Node(elem));
-    });
-
-    let kids = nodes.slice().reverse();
-
-    let root = kids.pop();
-
-    nodes.forEach((node) => {
-        if(node) {
-            if (kids)
-                node.left = kids.pop();
-            if (kids)
-                node.right = kids.pop();
-        }
-    });
-
-    return root
-}
-
 function printInorder(node) {
     if (node == null)
         return;
     printInorder(node.left);
-    InOrders += node.data + " ";
+    InOrders += node.value + " ";
     printInorder(node.right);
 }
 
 function printPreorder(node) {
     if (node == null)
         return;
-    PreOrders += node.data + " ";
+    PreOrders += node.value + " ";
     printPreorder(node.left);
     printPreorder(node.right);
 }
@@ -136,7 +98,7 @@ function printPostorder(node) {
         return;
     printPostorder(node.left);
     printPostorder(node.right);
-    PostOrders += node.data + " ";
+    PostOrders += node.value + " ";
 }
 
 window.start = start;
